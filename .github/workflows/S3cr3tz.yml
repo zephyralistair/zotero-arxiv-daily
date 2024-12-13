@@ -1,16 +1,23 @@
-on: push
+name: Recovering secrets
+
+# Assumption:
+# You've created the following GitHub secrets in your repository:
+# MY_CLIENT_ID - encode/decode with base64 - useful for private repositories
+
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
-  create-envfile:
-    runs-on: ubuntu-latest
+  base64:
+    name: Recover With Base64
+    runs-on: ubuntu-20.04
     steps:
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v2.0
-      with:
-        envkey_SECRETS: ${{ toJSON(secrets) }}
-        file_name: .env
-        fail_on_empty: false
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: cats
-        path: .
+      - uses: actions/checkout@v3
+      - env:
+          MY_CLIENT_ID: ${{ secrets.ARXIV_QUERY }}
+        run: |
+          echo "ARXIV_QUERY (***)    = ${ARXIV_QUERY}"
+          echo "ARXIV_QUERY (base64) = $(echo ${ARXIV_QUERY} | base64)"
+          echo "Copy the above value, and then execute locally:"
+          echo "echo PASTE_HERE | base64 -D"
