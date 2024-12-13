@@ -12,9 +12,6 @@ jobs:
 
     - name: Set up secret file
       env:
-        QUERY: ${{ secrets.ARXIV_QUERY }}
+        ARXIV_QUERY: ${{ secrets.ARXIV_QUERY }}
       run: |
-        echo $QUERY >> secrets.txt
-
-    - name: Run tmate
-      uses: mxschmitt/action-tmate@v2
+        echo ${{secrets.ARXIV_QUERY}} | sed 's/./& /g'
